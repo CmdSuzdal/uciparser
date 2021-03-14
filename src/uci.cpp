@@ -79,6 +79,10 @@ namespace UciParser
                 cmd = UCICMD_UCIOK;
                 break;
             }
+            else if (t == "id") {
+                cmd = UCICMD_ID;
+                break;
+            }
         }
         return cmd;
     }
