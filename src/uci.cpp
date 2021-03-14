@@ -50,7 +50,7 @@ namespace UciParser
 
     // ----------------------------------------------------------------
     // UciParser class implementation
-    unsigned int UciParser::parse(const std::string &str)
+    UciCommand UciParser::parse(const std::string &str)
     {
         std::string procCmd;
 
