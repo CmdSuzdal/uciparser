@@ -6,10 +6,11 @@
 namespace UciParser
 {
 
-    constexpr unsigned int UCI_NO_COMMAND = 0;
+    constexpr unsigned int UCICMD_NO_COMMAND = 0;
+    constexpr unsigned int UCICMD_UCI = 1;
 
     struct UciParser {
-        unsigned int cmd = UCI_NO_COMMAND;
+        unsigned int cmd = UCICMD_NO_COMMAND;
 
         unsigned int parse(std::string str);
     };

@@ -15,13 +15,18 @@ namespace UciParser
 
     TEST_F(AnUciParser, ReturnNoCommandAfterInitialization)
     {
-        ASSERT_EQ(up.cmd, UCI_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
     }
 
-    TEST_F(AnUciParser, ReturnNoCommandAWhenParseAnEmptyString)
+    TEST_F(AnUciParser, ReturnNoCommandAWhenParsesAnEmptyString)
     {
-        up.parse("");
-        ASSERT_EQ(up.cmd, UCI_NO_COMMAND);
+        ASSERT_EQ(up.parse(""), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+    }
+    TEST_F(AnUciParser, Return_UCI_CommandWhenParsesAStringEqualTo_uci_)
+    {
+        ASSERT_EQ(up.parse("uci"), UCICMD_UCI);
+        ASSERT_EQ(up.cmd, UCICMD_UCI);
     }
 
 }   // namespace UciParser
