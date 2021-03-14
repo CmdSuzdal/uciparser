@@ -74,19 +74,19 @@ if (ENABLE_COVERAGE_TEST)
             setup_target_for_coverage_gcovr_html(
                 NAME ${PROJECT_NAME}_coverage
                 EXECUTABLE ctest
+                BASE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 EXCLUDE /usr/include
-                    ${PROJECT_SOURCE_DIR}/test/*
-                    ${CMAKE_CURRENT_BINARY_DIR}/*
-                    ${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+                        test
+                        googletest-src
             )
         else()
             setup_target_for_coverage_fastcov(
                 NAME ${PROJECT_NAME}_coverage
                 EXECUTABLE ctest
+                BASE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 EXCLUDE /usr/include
-                    ${PROJECT_SOURCE_DIR}/test/*
-                    ${CMAKE_CURRENT_BINARY_DIR}/*
-                    ${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+                        test
+                        googletest-src
             )
         endif()
     endif()
