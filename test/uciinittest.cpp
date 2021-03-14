@@ -18,4 +18,10 @@ namespace UciParser
         ASSERT_EQ(up.cmd, UCI_NO_COMMAND);
     }
 
+    TEST_F(AnUciParser, ReturnNoCommandAWhenParseAnEmptyString)
+    {
+        up.parse("");
+        ASSERT_EQ(up.cmd, UCI_NO_COMMAND);
+    }
+
 }   // namespace UciParser
