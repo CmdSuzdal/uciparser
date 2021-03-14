@@ -1,5 +1,8 @@
 #include<bits/stdc++.h>
+#include <vector>
 #include <algorithm>
+#include <sstream>
+#include <iterator>
 
 #include "uciparser/uci.h"
 
@@ -59,8 +62,20 @@ namespace UciParser
 
         // The command string shall be processed in a case insensitive way
         transform(procCmd.begin(), procCmd.end(), procCmd.begin(), ::tolower);
-        if (procCmd == "uci")
-            cmd = UCICMD_UCI;
+
+        // Split the received command in tokens
+        std::istringstream iss(procCmd);
+        std::vector<std::string> tokens {
+            std::istream_iterator<std::string>{iss},
+            std::istream_iterator<std::string>{}};
+
+        // find the first token that is recognized as a command
+        for (auto t: tokens) {
+            if (t == "uci") {
+                cmd = UCICMD_UCI;
+                break;
+            }
+        }
         return cmd;
     }
     // ----------------------------------------------------------------

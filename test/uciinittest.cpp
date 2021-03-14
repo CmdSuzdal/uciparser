@@ -49,6 +49,19 @@ namespace UciParser
         ASSERT_EQ(up.parse(lfcr), UCICMD_NO_COMMAND);
         ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
     }
+    TEST_F(AnUciParser, ReturnNoCommandAWhenParsesAnUnknownString)
+    {
+        ASSERT_EQ(up.parse("UnknownString"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("UnknownString\r"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("UnknownString\n"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("UnknownString\n\r"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("UnknownString\r\n"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+    }
     TEST_F(AnUciParser, ReturnNoCommandWhenParses_uci_StringWithNoLineEnding)
     {
         ASSERT_EQ(up.parse("uci"), UCICMD_NO_COMMAND);
@@ -88,5 +101,27 @@ namespace UciParser
         ASSERT_EQ(up.parse("  \t  uci\t\r\n"), UCICMD_UCI);
         ASSERT_EQ(up.cmd, UCICMD_UCI);
     }
+
+    TEST_F(AnUciParser, Recognize_UCI_CommandIfReceiveAStringWith_uci_WithOtherUnknownText)
+    {
+        ASSERT_EQ(up.parse("uCi UnknownText\n\r"), UCICMD_UCI);
+        ASSERT_EQ(up.cmd, UCICMD_UCI);
+        ASSERT_EQ(up.parse("UnknownText     uci  \n\r"), UCICMD_UCI);
+        ASSERT_EQ(up.cmd, UCICMD_UCI);
+        ASSERT_EQ(up.parse("UnknownText uci OtherUnknownTest\n\r"), UCICMD_UCI);
+        ASSERT_EQ(up.cmd, UCICMD_UCI);
+    }
+
+    TEST_F(AnUciParser, DontRecognize_UCI_CommandIfReceiveAStringContaining_uci_WithOtherUnknownTextWithoutSeparation)
+    {
+        ASSERT_EQ(up.parse("uciUnknownText\n\r"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("UnknownTextUci\n\r"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("xxxUCIyyy\n\r"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+    }
+
+
 
 }   // namespace UciParser
