@@ -12,6 +12,7 @@ namespace UciParser
 
     constexpr unsigned int UCICMD_NO_COMMAND = 0;
     constexpr unsigned int UCICMD_UCI = 1;
+    constexpr unsigned int UCICMD_UCIOK = 1;
 
     struct UciParser {
         unsigned int cmd = UCICMD_NO_COMMAND;

@@ -121,6 +121,14 @@ namespace UciParser
         ASSERT_EQ(up.parse("xxxUCIyyy\n\r"), UCICMD_NO_COMMAND);
         ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
     }
+    TEST_F(AnUciParser, Return_UCIOK_CommandWhenParsesAStringEqualTo_uciok_WithCorrectLineEndings)
+    {
+        ASSERT_EQ(up.parse("uciok\n"), UCICMD_UCIOK);
+        ASSERT_EQ(up.cmd, UCICMD_UCIOK);
+        // Please note that we are not nagging ourselves with all the
+        // line ending, whitespaces and case variations like with the "uci"
+        // command, we are satisfied with the work already done previously
+    }
 
 
 
