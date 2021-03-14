@@ -50,24 +50,41 @@ namespace UciParser
     unsigned int UciParser::parse(const std::string &str)
     {
         std::string procCmd;
-        bool found;
 
         // reset command
         cmd = UCICMD_NO_COMMAND;
 
+        // clean the string and extract the command
+        procCmd = checkForNewLineAndCleanCommand(str);
+
+        // The command string shall be processed in a case insensitive way
+        transform(procCmd.begin(), procCmd.end(), procCmd.begin(), ::tolower);
+        if (procCmd == "uci")
+            cmd = UCICMD_UCI;
+        return cmd;
+    }
+    // ----------------------------------------------------------------
+
+    std::string UciParser::checkForNewLineAndCleanCommand(const std::string &str)
+    {
         // The UCI specification, mandates that a command shall be terminated
         // by a newline, with the newline that "can be 0x0d or 0x0a0d or any
         // combination depending on your OS."
         // For this reason we espect that a generic command can have the
         // following format:
         //    "[<wsle>]<command_string_and_args>[<wsle>]<le>[<ws>]"
-        // where [<ws>] are optional whitespaces, <le> are line endings
-        // characters and [<wsle>] whitespaces + line endings chars mixed
+        // where [<ws>] are optional whitespaces, <le> are mandatory line endings
+        // characters and [<wsle>] optional whitespaces + line endings chars mixed
 
+        // Purpose of this function is to return the string
+        // <command_string_and_args> if the newline sequence is found in
+        // the correct position, or an empty string otherwise
+
+        std::string procCmd;
+        bool found;
         // First remove any leading whitespace + line endings and
         // trailing whitespaces only
         procCmd = ltrim(str, WHITESPACE+LINEENDING, found);
-
         procCmd = rtrim(procCmd, WHITESPACE, found);
         // At this point the command has the format
         //    "<command_string_and_args>[wsle]<newline>"
@@ -78,22 +95,17 @@ namespace UciParser
         procCmd = rtrim(procCmd, LINEENDING, found);
         if (!found) {
             // command is not valid (no line endings present)
-            return cmd;
+            return "";
         }
         // At this point the command has the format
         //    "<command_string_and_args>[wsle]"
         // so remove any other trailing waste
         procCmd = rtrim(procCmd, WHITESPACE+LINEENDING, found);
 
-        // Finally we have the command without waste
+        // And finally we have the command without waste
         //    "<command_string_and_args>"
-
-        // The command string shall be processed in a case insensitive way
-        transform(procCmd.begin(), procCmd.end(), procCmd.begin(), ::tolower);
-        if (procCmd == "uci")
-            cmd = UCICMD_UCI;
-        return cmd;
+        return procCmd;
     }
-    // ----------------------------------------------------------------
+
 
 }   // namespace UciParser

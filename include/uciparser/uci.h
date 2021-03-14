@@ -17,6 +17,8 @@ namespace UciParser
         unsigned int cmd = UCICMD_NO_COMMAND;
 
         unsigned int parse(const std::string &str);
+    private:
+        std::string checkForNewLineAndCleanCommand(const std::string &str);
     };
 
 } // namespace UciParser
