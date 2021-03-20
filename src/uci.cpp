@@ -60,9 +60,6 @@ namespace UciParser
         // clean the string and extract the command
         procCmd = checkForNewLineAndCleanCommand(str);
 
-        // The command string shall be processed in a case insensitive way
-        transform(procCmd.begin(), procCmd.end(), procCmd.begin(), ::tolower);
-
         // Split the received command in tokens
         std::istringstream iss(procCmd);
         std::vector<std::string> tokens {
@@ -70,17 +67,20 @@ namespace UciParser
             std::istream_iterator<std::string>{}};
 
         // find the first token that is recognized as a command
-        for (auto t: tokens) {
-            if (t == "uci") {
+        for (auto ndx = 0; ndx < tokens.size(); ndx++) {
+            // The command string shall be processed in a case insensitive way
+            transform(tokens[ndx].begin(), tokens[ndx].end(),
+                                tokens[ndx].begin(), ::tolower);
+            if (tokens[ndx] == "uci") {
                 cmd = UCICMD_UCI;
                 break;
             }
-            else if (t == "uciok") {
+            else if (tokens[ndx] == "uciok") {
                 cmd = UCICMD_UCIOK;
                 break;
             }
-            else if (t == "id") {
-                cmd = UCICMD_ID;
+            else if (tokens[ndx] == "id") {
+                cmd = parseIdCommand(procCmd, tokens, ndx);
                 break;
             }
         }
@@ -130,5 +130,35 @@ namespace UciParser
         return procCmd;
     }
 
+    // ----------------------------------------------------------------
+    UciCommand UciParser::parseIdCommand(const std::string &cmd,
+                        std::vector<std::string> &tokens, int ndx)
+    {
+        // The token in position ndx has been recognized as "id".
+        //
+        // An id command - to be valid - shall be followed by one of
+        // the following parameters:
+        //   - name <engine_name>
+        //   - author <author_name>
+        //
+        // Both <engine_name> and <author_name> can be composed by any number of t
+        //
+        // Note that an "id" command alone is not valid
+
+        // First: the command shall have at least 2 additional tokens
+        if (tokens.size() <= ndx + 2)
+            return UCICMD_NO_COMMAND;
+
+        // Recognize "name" parameter (case insensitive)
+        transform(tokens[ndx+1].begin(), tokens[ndx+1].end(),
+                                tokens[ndx+1].begin(), ::tolower);
+        if (tokens[ndx+1] == "name") {
+            // "id name" command
+            // anything following "name<sp>" is the engine name (<sp> is any space)
+            // we try to preserve the format of the string following "name"
+            params["name"] = cmd.substr(cmd.find(tokens[ndx+2]));
+        }
+        return UCICMD_ID;
+    }
 
 }   // namespace UciParser

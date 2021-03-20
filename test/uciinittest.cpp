@@ -144,11 +144,64 @@ namespace UciParser
         ASSERT_EQ(up.parse("uciok\n"), UCICMD_UCIOK);
         ASSERT_EQ(up.cmd, UCICMD_UCIOK);
     }
-    TEST_F(AnUciParser, Recognize_id_CommandWithEngineNameInformation)
+
+    // -------------------------------------------------------------------------------------
+    // "id" command
+    TEST_F(AnUciParser, Discard_ID_CommandWithoutAdditionalParameters)
+    {
+        ASSERT_EQ(up.parse("id\n"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+    }
+    TEST_F(AnUciParser, Recognize_ID_NAME_Command)
+    {
+        ASSERT_EQ(up.parse("id name cmdsuzdal\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+
+        // An "id name ..." command has exactly one parameter with the format:
+        //      id name <engine_name>
+        // where <engine_name> is a string composed by any number of words
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("name") != up.params.end());
+        ASSERT_EQ(up.params["name"], "cmdsuzdal");
+    }
+    TEST_F(AnUciParser, Recognize_ID_NAME_CommandWithMultiWordEngineName)
+    {
+        ASSERT_EQ(up.parse("id name commander suzdal\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("name") != up.params.end());
+        ASSERT_EQ(up.params["name"], "commander suzdal");
+    }
+    TEST_F(AnUciParser, Recognize_ID_NAME_CommandWithMixedCaseEngineName)
     {
         ASSERT_EQ(up.parse("id name Commander Suzdal\n"), UCICMD_ID);
         ASSERT_EQ(up.cmd, UCICMD_ID);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("name") != up.params.end());
+        ASSERT_EQ(up.params["name"], "Commander Suzdal");
     }
+    TEST_F(AnUciParser, Discard_ID_NAME_IfEngineNameIsNotSpecified)
+    {
+        ASSERT_EQ(up.parse("id name\n"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+    }
+    TEST_F(AnUciParser, Recognize_ID_NAME_CommandAlsoIf_ID_CommandIsUppercase)
+    {
+        ASSERT_EQ(up.parse("ID name Commander Suzdal\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("name") != up.params.end());
+        ASSERT_EQ(up.params["name"], "Commander Suzdal");
+    }
+    TEST_F(AnUciParser, Recognize_ID_NAME_CommandAlsoIf_ID_CommandAndKeywordIsMixedCase)
+    {
+        ASSERT_EQ(up.parse("iD NaMe Commander Suzdal\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("name") != up.params.end());
+        ASSERT_EQ(up.params["name"], "Commander Suzdal");
+    }
+    // -------------------------------------------------------------------------------------
 
 
 

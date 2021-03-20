@@ -2,6 +2,7 @@
 #define CSZD_UCIPARSERMAIN_HEADER
 
 #include <string>
+#include <map>
 
 namespace UciParser
 {
@@ -20,11 +21,13 @@ namespace UciParser
 
     struct UciParser {
         UciCommand cmd = UCICMD_NO_COMMAND;
-        std::vector<std::string> params;
+        std::map<std::string, std::string> params;
 
         UciCommand parse(const std::string &str);
     private:
         std::string checkForNewLineAndCleanCommand(const std::string &str);
+        UciCommand parseIdCommand(const std::string &cmd,
+                std::vector<std::string> &tokens, int ndx);
     };
 
 } // namespace UciParser
