@@ -83,6 +83,14 @@ namespace UciParser
                 cmd = parseIdCommand(procCmd, tokens, ndx);
                 break;
             }
+            else if (tokens[ndx] == "isready") {
+                cmd = UCICMD_ISREADY;
+                break;
+            }
+            else if (tokens[ndx] == "readyok") {
+                cmd = UCICMD_READYOK;
+                break;
+            }
         }
         return cmd;
     }

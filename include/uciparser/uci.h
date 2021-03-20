@@ -16,7 +16,9 @@ namespace UciParser
         UCICMD_NO_COMMAND = 0,
         UCICMD_UCI,
         UCICMD_UCIOK,
-        UCICMD_ID
+        UCICMD_ID,
+        UCICMD_ISREADY,
+        UCICMD_READYOK
     };
 
     struct UciParser {

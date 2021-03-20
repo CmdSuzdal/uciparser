@@ -235,9 +235,25 @@ namespace UciParser
         ASSERT_EQ(up.parse("id author\n"), UCICMD_NO_COMMAND);
         ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
     }
-
     // -------------------------------------------------------------------------------------
-
+    TEST_F(AnUciParser, Return_ISREADY_CommandWhenParsesAStringEqualTo_isready_WithCorrectLineEndings)
+    {
+        ASSERT_EQ(up.parse("isready"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("isready\n"), UCICMD_ISREADY);
+    }
+    TEST_F(AnUciParser, Return_ISREADY_CommandWhenParsesAStringEqualTo_isready_WithAlsoIfOtherUnknownTextIsPresent)
+    {
+        ASSERT_EQ(up.parse("abba-dingo ISREADY alpha ralpha boulevard\n"), UCICMD_ISREADY);
+    }
+    TEST_F(AnUciParser, Return_READYOK_CommandWhenParsesAStringEqualTo_readyok_WithCorrectLineEndings)
+    {
+        ASSERT_EQ(up.parse("readyok"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("readyok\n"), UCICMD_READYOK);
+    }
+    TEST_F(AnUciParser, Return_READYOK_CommandWhenParsesAStringEqualTo_readyok_WithAlsoIfOtherUnknownTextIsPresent)
+    {
+        ASSERT_EQ(up.parse("abba-dingo readyok READYOK ready_OK alpha ralpha boulevard\n"), UCICMD_READYOK);
+    }
 
 
 }   // namespace UciParser
