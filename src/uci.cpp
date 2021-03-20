@@ -154,9 +154,15 @@ namespace UciParser
                                 tokens[ndx+1].begin(), ::tolower);
         if (tokens[ndx+1] == "name") {
             // "id name" command
-            // anything following "name<sp>" is the engine name (<sp> is any space)
+            // anything following "name" is the engine name;
             // we try to preserve the format of the string following "name"
             params["name"] = cmd.substr(cmd.find(tokens[ndx+2]));
+        }
+        else if (tokens[ndx+1] == "author") {
+            // "id author" command
+            // anything following "author" is the author name;
+            // we try to preserve the format of the string following "name"
+            params["author"] = cmd.substr(cmd.find(tokens[ndx+2]));
         }
         return UCICMD_ID;
     }

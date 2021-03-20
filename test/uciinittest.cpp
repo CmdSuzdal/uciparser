@@ -201,6 +201,41 @@ namespace UciParser
         ASSERT_TRUE(up.params.find("name") != up.params.end());
         ASSERT_EQ(up.params["name"], "Commander Suzdal");
     }
+    TEST_F(AnUciParser, Recognize_ID_NAME_CommandAlsoIfAdditionalWhiteSpacesArePresent)
+    {
+        ASSERT_EQ(up.parse("id name\t   \t  Commander      Suzdal 42\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("name") != up.params.end());
+        ASSERT_EQ(up.params["name"], "Commander      Suzdal 42");
+    }
+
+    TEST_F(AnUciParser, Recognize_ID_AUTHOR_Command)
+    {
+        ASSERT_EQ(up.parse("id author rodmcban\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+
+        // An "id author ..." command has exactly one parameter with the format:
+        //      id author <author_name>
+        // where <author_name> is a string composed by any number of words
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("author") != up.params.end());
+        ASSERT_EQ(up.params["author"], "rodmcban");
+    }
+    TEST_F(AnUciParser, Recognize_ID_AUTHOR_CommandWithMultiWordAuthorName)
+    {
+        ASSERT_EQ(up.parse("id Author Rod McBan\n"), UCICMD_ID);
+        ASSERT_EQ(up.cmd, UCICMD_ID);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_TRUE(up.params.find("author") != up.params.end());
+        ASSERT_EQ(up.params["author"], "Rod McBan");
+    }
+    TEST_F(AnUciParser, Discard_ID_AUTHOR_IfAuthorNameIsNotSpecified)
+    {
+        ASSERT_EQ(up.parse("id author\n"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
+    }
+
     // -------------------------------------------------------------------------------------
 
 
