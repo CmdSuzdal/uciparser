@@ -20,6 +20,7 @@ namespace UciParser
 
     struct UciParser {
         UciCommand cmd = UCICMD_NO_COMMAND;
+        std::vector<std::string> params;
 
         UciCommand parse(const std::string &str);
     private:

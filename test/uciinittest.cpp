@@ -121,12 +121,26 @@ namespace UciParser
         ASSERT_EQ(up.parse("xxxUCIyyy\n\r"), UCICMD_NO_COMMAND);
         ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
     }
+    TEST_F(AnUciParser, WhenRecognizeAn_UCI_CommandSetNumberOfParametersToZero)
+    {
+        up.parse("uci\n");
+        ASSERT_EQ(up.cmd, UCICMD_UCI);
+        ASSERT_EQ(up.params.size(), 0);
+    }
+    TEST_F(AnUciParser, WhenRecognizeAn_UCI_CommandSetNumberOfParametersToZeroAlsoIfOtherTextIsPresent)
+    {
+        up.parse("uci ThisIsNot AParameter\n");
+        ASSERT_EQ(up.cmd, UCICMD_UCI);
+        ASSERT_EQ(up.params.size(), 0);
+    }
 
     // Please note that for the next commands we are not nagging ourselves
     // with all the line ending, whitespaces and case variations like with
     // the "uci" command, we are satisfied with the work already done previously
     TEST_F(AnUciParser, Return_UCIOK_CommandWhenParsesAStringEqualTo_uciok_WithCorrectLineEndings)
     {
+        ASSERT_EQ(up.parse("uciok"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.cmd, UCICMD_NO_COMMAND);
         ASSERT_EQ(up.parse("uciok\n"), UCICMD_UCIOK);
         ASSERT_EQ(up.cmd, UCICMD_UCIOK);
     }
