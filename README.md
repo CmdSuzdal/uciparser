@@ -1,5 +1,8 @@
 # UciParser library
 
+![CMake](https://github.com/CmdSuzdal/uciparser/actions/workflows/cmake.yml/badge.svg)
+
+
 UCI Parser library: a C++ library to parse message in the [Universal Chess Interface protocol]. Mainly written to support the development of chess related software (e.g. Engines). It is part of the [Commander Suzdal] project
 
 Developed using a TDD approach.
