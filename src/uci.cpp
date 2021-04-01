@@ -95,6 +95,10 @@ namespace UciParser
                 cmd = UCICMD_UCINEWGAME;
                 break;
             }
+            else if (tokens[ndx] == "position") {
+                cmd = parsePositionCommand(procCmd, tokens, ndx);
+                break;
+            }
         }
         return cmd;
     }
@@ -153,7 +157,7 @@ namespace UciParser
         //   - name <engine_name>
         //   - author <author_name>
         //
-        // Both <engine_name> and <author_name> can be composed by any number of t
+        // Both <engine_name> and <author_name> can be composed by any text
         //
         // Note that an "id" command alone is not valid
 
@@ -177,6 +181,34 @@ namespace UciParser
             params["author"] = cmd.substr(cmd.find(tokens[ndx+2]));
         }
         return UCICMD_ID;
+    }
+    // ----------------------------------------------------------------
+    UciCommand UciParser::parsePositionCommand(const std::string &cmd,
+                        std::vector<std::string> &tokens, int ndx)
+    {
+        // The token in position ndx has been recognized as "position".
+        //
+        // A position command - to be valid - shall have one of the
+        // following sintax:
+        //   - startpos [sequence of moves]
+        //   - fen <fenstring> [sequence of moves]
+        //
+        // Note that a "position" command alone is not valid
+
+        // First: the command shall have at least 1 additional tokens
+        if (tokens.size() <= ndx + 1)
+            return UCICMD_NO_COMMAND;
+
+        // Recognize "startpos" parameter (case insensitive)
+        //transform(tokens[ndx+1].begin(), tokens[ndx+1].end(),
+        //                        tokens[ndx+1].begin(), ::tolower);
+        //if (tokens[ndx+1] == "startpos") {
+            // "id startpos" command
+            // anything following "startpos" is an optional
+            // sequence of moves
+        //}
+        params["position_mode"] = "startpos";
+        return UCICMD_POSITION;
     }
 
 }   // namespace UciParser

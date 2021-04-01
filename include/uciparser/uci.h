@@ -19,7 +19,8 @@ namespace UciParser
         UCICMD_ID,
         UCICMD_ISREADY,
         UCICMD_READYOK,
-        UCICMD_UCINEWGAME
+        UCICMD_UCINEWGAME,
+        UCICMD_POSITION
     };
 
     struct UciParser {
@@ -30,6 +31,8 @@ namespace UciParser
     private:
         std::string checkForNewLineAndCleanCommand(const std::string &str);
         UciCommand parseIdCommand(const std::string &cmd,
+                std::vector<std::string> &tokens, int ndx);
+        UciCommand parsePositionCommand(const std::string &cmd,
                 std::vector<std::string> &tokens, int ndx);
     };
 

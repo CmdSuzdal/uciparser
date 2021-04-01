@@ -263,5 +263,19 @@ namespace UciParser
         ASSERT_EQ(up.parse("UCINEWGAME\n"), UCICMD_UCINEWGAME);
     }
 
+    // -------------------------------------------------------------------------------------
+    TEST_F(AnUciParser, Discard_position_CommandWithNoAdditionalSpecifications)
+    {
+        ASSERT_EQ(up.parse("position"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("position\n"), UCICMD_NO_COMMAND);
+    }
+    TEST_F(AnUciParser, Recognize_position_startpos_CommandSavingStartposCondition)
+    {
+        ASSERT_EQ(up.parse("position startpos"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("position    startpos\n"), UCICMD_POSITION);
+        ASSERT_EQ(up.params.size(), 1);
+        ASSERT_EQ(up.params["position_mode"], "startpos");
+    }
+
 
 }   // namespace UciParser
