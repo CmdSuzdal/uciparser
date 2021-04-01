@@ -57,6 +57,9 @@ namespace UciParser
         // reset command
         cmd = UCICMD_NO_COMMAND;
 
+        // Removes all elements in the parameter map
+        params.clear();
+
         // clean the string and extract the command
         procCmd = checkForNewLineAndCleanCommand(str);
 
