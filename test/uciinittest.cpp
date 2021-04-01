@@ -254,6 +254,14 @@ namespace UciParser
     {
         ASSERT_EQ(up.parse("abba-dingo readyok READYOK ready_OK alpha ralpha boulevard\n"), UCICMD_READYOK);
     }
+    // -------------------------------------------------------------------------------------
+    TEST_F(AnUciParser, Return_UCINEWGAME_CommandWhenParsesAStringEqualTo_ucinewgame_WithCorrectLineEndings)
+    {
+        ASSERT_EQ(up.parse("ucinewgame"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("ucinewgame\n"), UCICMD_UCINEWGAME);
+        ASSERT_EQ(up.parse("UciNewGame\n"), UCICMD_UCINEWGAME);
+        ASSERT_EQ(up.parse("UCINEWGAME\n"), UCICMD_UCINEWGAME);
+    }
 
 
 }   // namespace UciParser

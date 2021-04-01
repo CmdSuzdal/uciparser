@@ -18,7 +18,8 @@ namespace UciParser
         UCICMD_UCIOK,
         UCICMD_ID,
         UCICMD_ISREADY,
-        UCICMD_READYOK
+        UCICMD_READYOK,
+        UCICMD_UCINEWGAME
     };
 
     struct UciParser {

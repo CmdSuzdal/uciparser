@@ -91,6 +91,10 @@ namespace UciParser
                 cmd = UCICMD_READYOK;
                 break;
             }
+            else if (tokens[ndx] == "ucinewgame") {
+                cmd = UCICMD_UCINEWGAME;
+                break;
+            }
         }
         return cmd;
     }
