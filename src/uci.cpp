@@ -205,11 +205,29 @@ namespace UciParser
         // Recognize "startpos" parameter (case insensitive)
         transform(tokens[ndx+1].begin(), tokens[ndx+1].end(),
                        tokens[ndx+1].begin(), ::tolower);
-        if (tokens[ndx+1] == "startpos") {
-            // "id startpos" command
+        int curpos = ndx+1;
+        if (tokens[curpos] == "startpos") {
+            // "position startpos" command
             // anything following "startpos" is an optional
-            // sequence of moves
+            // sequence of moves that we will process later
             params["position_mode"] = "startpos";
+            ++curpos;
+        }
+        else if (tokens[curpos] == "fenstring") {
+            // "position fenstring" command
+            // following "fenstring" there shall be a mandatory
+            // fenstring and an optional sequence of moves;
+            // a fenstring is composed by 6 tokens
+            if (tokens.size() <= curpos + 6)
+                return UCICMD_NO_COMMAND;
+            params["position_mode"] = "fenstring";
+            params["fenstring"] = "";
+            ++curpos;
+            for (auto fndx = 0; fndx < 6; fndx++, curpos++) {
+                if (fndx > 0)
+                    params["fenstring"] += " ";
+                params["fenstring"] += tokens[curpos];
+            }
         }
         else {
             return UCICMD_NO_COMMAND;
@@ -217,14 +235,15 @@ namespace UciParser
 
         // if here, a valid position command has been recognized,
         // checks for optional moves specification
-        if (tokens.size() > ndx + 2) {
-            if (tokens[ndx+2] == "moves") {
+        if (tokens.size() > curpos) {
+            if (tokens[curpos] == "moves") {
                 // everything follows is a sequences of moves
                 params["moves"] = "";
-                for (auto mndx = ndx+3; mndx < tokens.size(); mndx++) {
-                    if (mndx > ndx+3)
+                ++curpos;
+                for (; curpos < tokens.size(); curpos++) {
+                    if (curpos > ndx+3)
                         params["moves"] += " ";
-                    params["moves"] += tokens[mndx];
+                    params["moves"] += tokens[curpos];
                 }
             }
         }
