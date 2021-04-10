@@ -34,6 +34,12 @@ namespace UciParser
                 std::vector<std::string> &tokens, int ndx);
         UciCommand parsePositionCommand(const std::string &cmd,
                 std::vector<std::string> &tokens, int ndx);
+        UciCommand parsePositionStartposSubCommand(const std::string &cmd,
+                std::vector<std::string> &tokens, int ndx);
+        UciCommand parsePositionFenstringSubCommand(const std::string &cmd,
+                std::vector<std::string> &tokens, int ndx);
+        void parseMovesInPositionCommand(const std::string &cmd,
+                std::vector<std::string> &tokens, int ndx);
     };
 
 } // namespace UciParser

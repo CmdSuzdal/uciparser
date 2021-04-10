@@ -206,48 +206,73 @@ namespace UciParser
         transform(tokens[ndx+1].begin(), tokens[ndx+1].end(),
                        tokens[ndx+1].begin(), ::tolower);
         int curpos = ndx+1;
+
         if (tokens[curpos] == "startpos") {
-            // "position startpos" command
-            // anything following "startpos" is an optional
-            // sequence of moves that we will process later
-            params["position_mode"] = "startpos";
-            ++curpos;
+            return parsePositionStartposSubCommand(cmd, tokens, curpos);
         }
         else if (tokens[curpos] == "fenstring") {
-            // "position fenstring" command
-            // following "fenstring" there shall be a mandatory
-            // fenstring and an optional sequence of moves;
-            // a fenstring is composed by 6 tokens
-            if (tokens.size() <= curpos + 6)
-                return UCICMD_NO_COMMAND;
-            params["position_mode"] = "fenstring";
-            params["fenstring"] = "";
-            ++curpos;
-            for (auto fndx = 0; fndx < 6; fndx++, curpos++) {
-                if (fndx > 0)
-                    params["fenstring"] += " ";
-                params["fenstring"] += tokens[curpos];
-            }
+            return parsePositionFenstringSubCommand(cmd, tokens, curpos);
         }
         else {
             return UCICMD_NO_COMMAND;
         }
+    }
+
+    // ----------------------------------------------------------------
+    UciCommand UciParser::parsePositionStartposSubCommand(const std::string &cmd,
+            std::vector<std::string> &tokens, int ndx)
+    {
+        // "position startpos" command
+        // anything following "startpos" is an optional
+        // sequence of moves that we will process later
+        params["position_mode"] = "startpos";
+        ++ndx;
 
         // if here, a valid position command has been recognized,
         // checks for optional moves specification
-        if (tokens.size() > curpos) {
-            if (tokens[curpos] == "moves") {
+        parseMovesInPositionCommand(cmd, tokens, ndx);
+        return UCICMD_POSITION;
+    }
+    // ----------------------------------------------------------------
+    UciCommand UciParser::parsePositionFenstringSubCommand(const std::string &cmd,
+            std::vector<std::string> &tokens, int ndx)
+    {
+        // "position fenstring" command
+        // following "fenstring" there shall be a mandatory
+        // fenstring and an optional sequence of moves;
+        // a fenstring is composed by 6 tokens
+        if (tokens.size() <= ndx + 6)
+            return UCICMD_NO_COMMAND;
+        params["position_mode"] = "fenstring";
+        params["fenstring"] = "";
+        ++ndx;
+        for (auto fndx = 0; fndx < 6; fndx++, ndx++) {
+            if (fndx > 0)
+                params["fenstring"] += " ";
+            params["fenstring"] += tokens[ndx];
+        }
+
+        // if here, a valid position command has been recognized,
+        // checks for optional moves specification
+        parseMovesInPositionCommand(cmd, tokens, ndx);
+        return UCICMD_POSITION;
+    }
+    // ----------------------------------------------------------------
+    void UciParser::parseMovesInPositionCommand(const std::string &cmd,
+            std::vector<std::string> &tokens, int ndx)
+    {
+        if (tokens.size() > ndx) {
+            if (tokens[ndx] == "moves") {
                 // everything follows is a sequences of moves
                 params["moves"] = "";
-                ++curpos;
-                for (; curpos < tokens.size(); curpos++) {
-                    if (curpos > ndx+3)
+                ++ndx;
+                for (; ndx < tokens.size(); ndx++) {
+                    params["moves"] += tokens[ndx];
+                    if (ndx < (tokens.size() - 1))
                         params["moves"] += " ";
-                    params["moves"] += tokens[curpos];
                 }
             }
         }
-        return UCICMD_POSITION;
     }
 
 }   // namespace UciParser
