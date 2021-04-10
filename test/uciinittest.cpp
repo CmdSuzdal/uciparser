@@ -371,6 +371,14 @@ namespace UciParser
         ASSERT_EQ(up.params["position_mode"], "fenstring");
         ASSERT_EQ(up.params["fenstring"], "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
     }
+    TEST_F(AnUciParser, Recognize_position_fenstring_IfFenStringAndMovesAreProvided)
+    {
+        ASSERT_EQ(up.parse("position fenstring 2r1r1k1/pp3pp1/1b1q1nb1/3p2B1/3P4/P1N2P2/1P3QBP/R2R2K1 w - - 1 26 moves g5f6 d6f6 c3d5\n"), UCICMD_POSITION);
+        ASSERT_EQ(up.params.size(), 3);
+        ASSERT_EQ(up.params["position_mode"], "fenstring");
+        ASSERT_EQ(up.params["fenstring"], "2r1r1k1/pp3pp1/1b1q1nb1/3p2B1/3P4/P1N2P2/1P3QBP/R2R2K1 w - - 1 26");
+        ASSERT_EQ(up.params["moves"], "g5f6 d6f6 c3d5");
+    }
 
 
 }   // namespace UciParser
