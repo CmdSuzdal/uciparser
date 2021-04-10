@@ -203,14 +203,31 @@ namespace UciParser
             return UCICMD_NO_COMMAND;
 
         // Recognize "startpos" parameter (case insensitive)
-        //transform(tokens[ndx+1].begin(), tokens[ndx+1].end(),
-        //                        tokens[ndx+1].begin(), ::tolower);
-        //if (tokens[ndx+1] == "startpos") {
+        transform(tokens[ndx+1].begin(), tokens[ndx+1].end(),
+                       tokens[ndx+1].begin(), ::tolower);
+        if (tokens[ndx+1] == "startpos") {
             // "id startpos" command
             // anything following "startpos" is an optional
             // sequence of moves
-        //}
-        params["position_mode"] = "startpos";
+            params["position_mode"] = "startpos";
+        }
+        else {
+            return UCICMD_NO_COMMAND;
+        }
+
+        // if here, a valid position command has been recognized,
+        // checks for optional moves specification
+        if (tokens.size() > ndx + 2) {
+            if (tokens[ndx+2] == "moves") {
+                // everything follows is a sequences of moves
+                params["moves"] = "";
+                for (auto mndx = ndx+3; mndx < tokens.size(); mndx++) {
+                    if (mndx > ndx+3)
+                        params["moves"] += " ";
+                    params["moves"] += tokens[mndx];
+                }
+            }
+        }
         return UCICMD_POSITION;
     }
 

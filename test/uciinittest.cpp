@@ -325,12 +325,31 @@ namespace UciParser
         ASSERT_EQ(up.parse("position\n"), UCICMD_NO_COMMAND);
         ASSERT_EQ(up.params.size(), 0);
     }
+    TEST_F(AnUciParser, Discard_position_CommandWithUnknownParameter)
+    {
+        ASSERT_EQ(up.parse("position unknown"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.params.size(), 0);
+        ASSERT_EQ(up.parse("position unknown\n"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.params.size(), 0);
+    }
     TEST_F(AnUciParser, Recognize_position_startpos_CommandSavingStartposCondition)
     {
         ASSERT_EQ(up.parse("position startpos"), UCICMD_NO_COMMAND);
         ASSERT_EQ(up.parse("position    startpos\n"), UCICMD_POSITION);
         ASSERT_EQ(up.params.size(), 1);
         ASSERT_EQ(up.params["position_mode"], "startpos");
+    }
+    TEST_F(AnUciParser, Recognize_position_startpos_with_moves_Command)
+    {
+        ASSERT_EQ(up.parse("position startpos moves e2e4 e7e5 g1f3"), UCICMD_NO_COMMAND);
+        ASSERT_EQ(up.parse("position startpos moves e2e4 e7e5 g1f3\n"), UCICMD_POSITION);
+        ASSERT_EQ(up.params.size(), 2);
+        ASSERT_EQ(up.params["position_mode"], "startpos");
+        ASSERT_EQ(up.params["moves"], "e2e4 e7e5 g1f3");
+        ASSERT_EQ(up.parse("position startpos moves    e2e4    e7e5    g1f3       aaa\n"), UCICMD_POSITION);
+        ASSERT_EQ(up.params.size(), 2);
+        ASSERT_EQ(up.params["position_mode"], "startpos");
+        ASSERT_EQ(up.params["moves"], "e2e4 e7e5 g1f3 aaa");
     }
 
 
